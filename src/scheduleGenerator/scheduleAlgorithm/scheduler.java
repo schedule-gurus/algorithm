@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class scheduler {
@@ -16,16 +17,26 @@ public class scheduler {
     public List<List<Integer>> successfulSchedulesSID;                //0700->2200, M-F, 30 minute bins = 150 bins to represent the whole week
 
 
-    public List<BitSet> buildSchedules(List<course> courseList, int schedulesDesired) throws Exception {
+    public List<BitSet> buildSchedules(List<List<course>> subjectList, int schedulesDesired) throws Exception {
         //INPUT: LIST OF COURSE OBJECTS
         //OUTPUT: List of possible schedules in bitset format
-        List<BitSet> schedules = new ArrayList<>();
+        schedules = new ArrayList<>();
         successfulSchedulesSID = new ArrayList<>();
 
 
 
         //BUILDING SCHEDULES
         while (schedules.size() < schedulesDesired){
+            //Iterating through the classes you are taking
+            //randomly choose one class from each subject
+            List<course> courseList = new ArrayList<>();
+            for (int i = 0; subjectList.size() > i; i++){
+                //randomly grabbing subject and adding it to courseList
+                int boundIndex = subjectList.get(i).size();
+                //adding a random subjet class to courseList
+                courseList.add(subjectList.get(i).get(ThreadLocalRandom.current()
+                .nextInt(subjectList.get(i).size()) % boundIndex));
+            }
             BitSet tempSchedule = new BitSet(150);              //creating a empty schedule to fill later
             List<Integer> tempSIDArray = new ArrayList<>();
             boolean collision = false;
@@ -35,6 +46,7 @@ public class scheduler {
                     tempSchedule = addCoursetoSchedule(tempSchedule, tempSIDArray, course);
                 } catch (IOException e) {
                     //Collision so we need to restart the above loop. possibly ask JaeHyung
+                    System.out.println("Collision happened");
                     collision = true;
                 }
             }
@@ -79,5 +91,22 @@ public class scheduler {
 
     }
 
+    public List<List<Integer>> getSID(){
+        return successfulSchedulesSID;
+    }
+    public List<BitSet> getSchedules(){
+        return schedules;
+    }
+
+    public String printSchedules(){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; schedules.size() > i; i++){
+            sb.append("Schedule " + i + "\n" + schedules.get(i).toString() + "\n\n");
+        }
+        for (int j = 0 ; successfulSchedulesSID.size() > j; j++){
+            sb.append("SID's are : " + successfulSchedulesSID.get(j).toString() + "\n");
+        }
+        return sb.toString();
+    }
 }
 
