@@ -42,14 +42,13 @@ public class course {
         currCapacity    = 0;
         daysofweek      ="";
         maxCapacity     = 0;
-//        courseTimes     = new ArrayList<Map.Entry<String, String>>();   //Time should be in format [("D", "TTTT-TTTT"), ("D", "TTTT-TTTT"), ("D", "TTTT-TTTT")]
         ratemyprof      = -1;
 
         String [] tokens = text.trim().split("\\s*,\\s*");         //parsing it by comma separated.
         if (tokens.length < 4){
             throw new Exception("Something isn't write with your class input data");
         }
-        if (tokens.length == 5){                           //no rate my professor in the input string
+        if (tokens.length == 5){                                //no rate my professor in the input string
             className       = tokens[0];
             sessionID       = Integer.parseInt(tokens[1]);
             daysofweek      = tokens[2];
